@@ -7,4 +7,5 @@
 # Instalação
 1. python -m venv .venv
 2. source .venv/Scripts/activate
-3. streamlit run src/Practice1/main.py
+3. streamlit run src/Practice1/main_v1.py
+4. streamlit run src/Practice2/main_v2.py
