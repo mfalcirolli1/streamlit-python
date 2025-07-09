@@ -9,3 +9,4 @@
 2. source .venv/Scripts/activate
 3. streamlit run src/Practice1/main_v1.py
 4. streamlit run src/Practice2/main_v2.py
+5. streamlit run src/maze/app.py
