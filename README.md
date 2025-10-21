@@ -6,7 +6,9 @@
 
 # Instalação
 1. python -m venv .venv
-2. source .venv/Scripts/activate
-3. streamlit run src/Practice1/main_v1.py
-4. streamlit run src/Practice2/main_v2.py
-5. streamlit run src/maze/app.py
+2. pip install src/requirements.txt
+3. source .venv/Scripts/activate
+
+5. streamlit run src/Practice2/main_v2.py
+6. streamlit run src/maze/app.py
+7. streamlit run src/machine_learning/app.py
