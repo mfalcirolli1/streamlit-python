@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import charset_normalizer as cn
+from machine_learning_usecase import MachineLearningUseCase
 
 class App():
 
@@ -21,6 +22,9 @@ class App():
                 df = pd.read_csv(file, encoding='utf-8')
                 st.subheader("Preview of uploaded data")
                 st.dataframe(df.head())
+
+                # Machine Learning usa Variáveis independentes para prever o valor de uma Variável Dependente
+                MachineLearningUseCase().analytics(df)                
 
             except Exception as e:
                 st.error(f"Não foi possível ler o arquivo CSV: {e}")
