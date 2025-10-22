@@ -6,12 +6,11 @@ from machine_learning_usecase import MachineLearningUseCase
 class App():
 
     def __init__(self):
-        st.title("Machine Learning App")
+        st.title("Machine Learning Study App")
 
 
     def run(self):
-        st.header("Welcome to the Machine Learning Application")
-        st.write("This application demonstrates a simple machine learning model using Streamlit.")
+        st.header("Welcome to the Machine Learning Study App")
 
         file = st.file_uploader("Upload your dataset here", type=["txt"])
 
@@ -24,7 +23,8 @@ class App():
                 st.dataframe(df.head())
 
                 # Machine Learning usa Variáveis independentes para prever o valor de uma Variável Dependente
-                MachineLearningUseCase().analytics(df)                
+                MachineLearningUseCase().analytics(df)
+                MachineLearningUseCase().preparing(df)              
 
             except Exception as e:
                 st.error(f"Não foi possível ler o arquivo CSV: {e}")
