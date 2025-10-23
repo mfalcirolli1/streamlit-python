@@ -176,7 +176,7 @@ class MachineLearningUseCase():
             st.write("#### Variável Dependente (y)")
             st.write(y.head())
 
-            st.header("Divisão entre Conjunto de Treinamento e Teste")
+            st.write("Divisão entre Conjunto de Treinamento e Teste")
             # Isolar o conjunto de teste do conjunto de treino
 
             X_train, X_test, y_train, y_test = train_test_split(X, y, 
@@ -185,8 +185,18 @@ class MachineLearningUseCase():
             st.write(f"#### Tamanho do Conjunto de Treinamento: {len(X_train)} e {len(y_train)}")
             st.write(f"#### Tamanho do Conjunto de Teste: {len(X_test)} e {len(y_test)}")
 
+            return X_train, X_test, y_train, y_test
 
 
     def fit_and_score(self, X_train, X_test, y_train, y_test):
-        
-        pass
+        model_scores = {}
+        items = self.models.items()
+
+        for name, model in items:
+            model.fit(X_train, y_train) # Serve para trainer o modelo
+            model_scores[name] = model.score(X_test, y_test) # Serve para avaliar o modelo
+
+        st.write("Resultados dos Modelos")
+        st.write(model_scores)
+
+        return model_scores

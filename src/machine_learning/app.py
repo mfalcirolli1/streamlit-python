@@ -24,7 +24,9 @@ class App():
 
                 # Machine Learning usa Variáveis independentes para prever o valor de uma Variável Dependente
                 MachineLearningUseCase().analytics(df)
-                MachineLearningUseCase().preparing(df)              
+                X_train, X_test, y_train, y_test = MachineLearningUseCase().preparing(df)
+                model_scores = MachineLearningUseCase().fit_and_score(X_train, X_test, y_train, y_test)
+
 
             except Exception as e:
                 st.error(f"Não foi possível ler o arquivo CSV: {e}")
