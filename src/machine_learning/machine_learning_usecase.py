@@ -4,6 +4,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier
 
+from sklearn.model_selection import RandomizedSearchCV
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -189,14 +191,57 @@ class MachineLearningUseCase():
 
 
     def fit_and_score(self, X_train, X_test, y_train, y_test):
-        model_scores = {}
-        items = self.models.items()
+        with st.expander("### Treinamento e Avaliação dos Modelos"):
+            model_scores = {}
+            items = self.models.items()
 
-        for name, model in items:
-            model.fit(X_train, y_train) # Serve para trainer o modelo
-            model_scores[name] = model.score(X_test, y_test) # Serve para avaliar o modelo
+            for name, model in items:
+                model.fit(X_train, y_train) # Serve para trainer o modelo
+                model_scores[name] = model.score(X_test, y_test) # Serve para avaliar o modelo
 
-        st.write("Resultados dos Modelos")
-        st.write(model_scores)
+            st.write("Resultados dos Modelos")
+            st.write(model_scores)
 
-        return model_scores
+            return model_scores
+        
+    
+    def ajuste_hyperparametros(self, X_train, X_test, y_train, y_test):
+        with st.expander("### Ajuste de Hyperparâmetros e Validação Cruzada"):
+            
+            st.write("RandomizedSearchCV")
+
+            log_reg_hyperparams = {
+                'C': np.logspace(-4, 4, 20),
+                'solver': ['liblinear']
+            }
+            
+            rand_forest_hyperparams = {
+                'n_estimators': np.arange(10, 1000, 50), # O número máximo de árvores que serão criadas no modelo
+                'max_depth': [None, 3, 5, 10], # A profundidade máxima de cada árvore na floresta
+                'min_samples_split': np.arange(2, 20, 2), # O número mínimo de amostras necessárias para dividir um nó interno
+                'min_samples_leaf': np.arange(1, 20, 2) # O
+            }
+
+            rscv_log_reg = RandomizedSearchCV(
+                LogisticRegression(),
+                param_distributions=log_reg_hyperparams,
+                n_iter=20, # Iterações máximas
+                cv=5, # número de folds na validação cruzada
+                verbose=True
+            )
+
+            st.write("Treinando Logistic Regression com RandomizedSearchCV...")
+            st.write(rscv_log_reg.fit(X_train, y_train))
+            st.write("Melhores Hyperparâmetros para Logistic Regression:")
+            st.write(rscv_log_reg.best_params_)
+            st.write(f"Score do Melhor Modelo Logistic Regression: {rscv_log_reg.score(X_test, y_test)}")
+
+            # rscv_rand_forest = RandomizedSearchCV(
+            #     RandomForestClassifier(),
+            #     param_distributions=rand_forest_hyperparams,
+            #     n_iter=20,
+            #     cv=5,
+            #     verbose=True
+            # )
+
+    

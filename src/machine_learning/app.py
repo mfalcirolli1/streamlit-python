@@ -27,6 +27,9 @@ class App():
                 X_train, X_test, y_train, y_test = MachineLearningUseCase().preparing(df)
                 model_scores = MachineLearningUseCase().fit_and_score(X_train, X_test, y_train, y_test)
 
+                MachineLearningUseCase().ajuste_hyperparametros(X_train, X_test, y_train, y_test)
+
+
 
             except Exception as e:
                 st.error(f"Não foi possível ler o arquivo CSV: {e}")
