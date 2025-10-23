@@ -54,7 +54,13 @@ Impacto esperado: É a variável alvo do modelo — tudo o mais serve para preve
 class MachineLearningUseCase():
 
     def __init__(self):
-        pass
+
+        self.models = {
+            "Logistic Regression": LogisticRegression(),
+            "KNN": KNeighborsClassifier(),
+            "Random Forest": RandomForestClassifier()
+        }
+
 
     def analytics(self, data_frame):
 
@@ -180,5 +186,7 @@ class MachineLearningUseCase():
             st.write(f"#### Tamanho do Conjunto de Teste: {len(X_test)} e {len(y_test)}")
 
 
-    def algorithm(self, data_frame):
+
+    def fit_and_score(self, X_train, X_test, y_train, y_test):
+        
         pass
