@@ -5,6 +5,11 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier
 
 from sklearn.model_selection import RandomizedSearchCV
+from sklearn.model_selection import GridSearchCV
+
+from sklearn.metrics import RocCurveDisplay
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import classification_report
 
 import pandas as pd
 import numpy as np
@@ -206,42 +211,91 @@ class MachineLearningUseCase():
         
     
     def ajuste_hyperparametros(self, X_train, X_test, y_train, y_test):
+        
         with st.expander("### Ajuste de Hyperparâmetros e Validação Cruzada"):
             
-            st.write("RandomizedSearchCV")
+            st.header("Logistic Regression - RandomizedSearchCV")
 
             log_reg_hyperparams = {
                 'C': np.logspace(-4, 4, 20),
                 'solver': ['liblinear']
             }
             
-            rand_forest_hyperparams = {
-                'n_estimators': np.arange(10, 1000, 50), # O número máximo de árvores que serão criadas no modelo
-                'max_depth': [None, 3, 5, 10], # A profundidade máxima de cada árvore na floresta
-                'min_samples_split': np.arange(2, 20, 2), # O número mínimo de amostras necessárias para dividir um nó interno
-                'min_samples_leaf': np.arange(1, 20, 2) # O
-            }
-
             rscv_log_reg = RandomizedSearchCV(
                 LogisticRegression(),
                 param_distributions=log_reg_hyperparams,
-                n_iter=20, # Iterações máximas
-                cv=5, # número de folds na validação cruzada
+                cv=5, # Número em que o conjunto de dados será dividido em partes (ou folds) para validação cruzada (controla robustez)
+                n_iter=20, # Quantas combinações aleatórias de hiperparâmetros serão testadas (controla custo de busca)
                 verbose=True
             )
 
-            st.write("Treinando Logistic Regression com RandomizedSearchCV...")
             st.write(rscv_log_reg.fit(X_train, y_train))
-            st.write("Melhores Hyperparâmetros para Logistic Regression:")
+            st.write("Melhores Hyperparâmetros para Logistic Regression (RandomizedSearchCV):")
             st.write(rscv_log_reg.best_params_)
             st.write(f"Score do Melhor Modelo Logistic Regression: {rscv_log_reg.score(X_test, y_test)}")
+
+            # -------------------------------------------------------------------------------------------- 
+
+            st.header("Logistic Regression - GridSearchCV")
+
+            grid_log_reg = GridSearchCV(
+                LogisticRegression(),
+                param_grid=log_reg_hyperparams,
+                cv=5,
+                verbose=True
+            )
+
+            grid_log_reg.fit(X_train, y_train)
+            st.write("Melhores Hyperparâmetros para Logistic Regression (GridSearchCV):")
+            st.write(grid_log_reg.best_params_)
+            st.write(f"Score do Melhor Modelo Logistic Regression (GridSearchCV): {grid_log_reg.score(X_test, y_test)}")
+
+            # -------------------------------------------------------------------------------------------- 
+
+            # st.header("Random Forest Classifier - RandomizedSearchCV")
+
+            # rand_forest_hyperparams = {
+            #     'n_estimators': np.arange(10, 1000, 50), # O número máximo de árvores que serão criadas no modelo
+            #     'max_depth': [None, 3, 5, 10], # A profundidade máxima de cada árvore na floresta
+            #     'min_samples_split': np.arange(2, 20, 2), # O número mínimo de amostras necessárias para dividir um nó interno
+            #     'min_samples_leaf': np.arange(1, 20, 2) # O número mínimo de amostras necessárias para estar em um nó folha
+            # }
 
             # rscv_rand_forest = RandomizedSearchCV(
             #     RandomForestClassifier(),
             #     param_distributions=rand_forest_hyperparams,
-            #     n_iter=20,
             #     cv=5,
+            #     n_iter=20,
             #     verbose=True
             # )
 
+            # st.write("Treinando Random Forest com RandomizedSearchCV...")
+            # st.write(rscv_rand_forest.fit(X_train, y_train))
+            # st.write("Melhores Hyperparâmetros para Random Forest:")
+            # st.write(rscv_rand_forest.best_params_)
+            # st.write(f"Score do Melhor Modelo Random Forest: {rscv_rand_forest.score(X_test, y_test)}")
+
+            st.header("Avaliar o Modelo")
+
+            st.write("Curva ROC - Quanto maior a área sob a curva (mais próximo de 1), melhor o modelo")
+
+            plot_roc_curve = RocCurveDisplay.from_estimator(rscv_log_reg, X_test, y_test)
+            st.pyplot(plot_roc_curve.figure_)
+
+            st.write("Matriz de Confusão - Matriz com os valores reais e previstos pelo modelo")
+
+            y_preds = rscv_log_reg.predict(X_test)
+            st.write(confusion_matrix(y_test, y_preds))
+
+            sns.set(font_scale=1.5)
+            fig, ax = plt.subplots(figsize=(3,3))
+            ax = sns.heatmap(confusion_matrix(y_test, y_preds), annot=True, cbar=False)
+            plt.xlabel("Rótulos verdadeiros")
+            plt.ylabel("Rótulos previstos")
+            st.pyplot(fig)
+
+            st.write("Relatório de Classificação - Métricas detalhadas de desempenho do modelo")
+            st.text(classification_report(y_test, y_preds))
+            
+            
     
